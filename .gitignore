@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/release
 
 pubspec.lock
+
+# .gitignore
+google-services.json
+GoogleService-Info.plist
+firebase_app_id_file.json
+firebase_options.dart
+firebase.json
