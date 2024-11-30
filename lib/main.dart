@@ -1,10 +1,10 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:neubrutalism_ui/neubrutalism_ui.dart';
 import 'package:pattern_background/pattern_background.dart';
 import 'package:time_memo_app/pages/to_do_page.dart';
+import 'package:time_memo_app/theme.dart';
 import 'package:time_memo_app/widgets/floatingAcbu.dart';
 import 'firebase_options.dart';
 
@@ -29,15 +29,16 @@ void main() async {
 }
 
 
-class MyToDoApp extends StatelessWidget {
+class MyToDoApp extends ConsumerWidget {
   const MyToDoApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
     return MaterialApp(
-      theme: ThemeData(
-          fontFamily: "BananaFlip"
-      ),
+      themeMode: ThemeMode.light,
+      theme: MaterialTheme().light(),
+      darkTheme: MaterialTheme().dark(),
       home: MyPage(),
     );
   }
@@ -49,8 +50,8 @@ class MyPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var c1 = Colors.white;
-    var c2 = Colors.black;
+    var c1 = Theme.of(context).colorScheme.surface;
+    var c2 = Theme.of(context).colorScheme.onSurface;
     final width=MediaQuery.of(context).size.width;
     final height=MediaQuery.of(context).size.height;
     return Scaffold(

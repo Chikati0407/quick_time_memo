@@ -30,10 +30,10 @@ class Todoitem extends ConsumerWidget {
                 RoundCheckBox(
                   onTap: (value){},
                   isChecked: false,
-                  checkedColor: Color(0xffecc7d3),
-                  borderColor: Colors.black,
+                  checkedColor: Theme.of(context).colorScheme.secondaryContainer,
+                  borderColor: Theme.of(context).colorScheme.onSecondaryContainer,
                   border: Border.all(width: 3),
-                  checkedWidget: Icon(Icons.check),
+                  checkedWidget: Icon(Icons.check, color: Theme.of(context).colorScheme.onSecondaryContainer,),
                   uncheckedWidget: Icon(icon),
                 ),
                 SizedBox(width: 16,),
