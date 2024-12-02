@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:time_memo_app/scripts/scripts.dart';
 import 'package:time_memo_app/state/app_state.dart';
 import 'package:time_memo_app/widgets/todoItem.dart';
 
@@ -21,9 +22,15 @@ class ToDoPage extends ConsumerWidget {
               return ListView.builder(
                 itemCount: tasks.length,
                 itemBuilder: (context, index){
-                  return Todoitem(
-                    task: tasks[index],
-                  );
+                  final DateTime date = tasks[index]["time"].toDate();
+
+                  if (datetime_difference(date,true)["difference"] > 0) {
+                    return Todoitem(
+                      task: tasks[index],
+                    );
+                  } else {
+                    return SizedBox();
+                  }
                 },
               );
             }

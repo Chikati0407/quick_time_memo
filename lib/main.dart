@@ -1,10 +1,12 @@
 // import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pattern_background/pattern_background.dart';
 import 'package:time_memo_app/pages/to_do_page.dart';
 import 'package:time_memo_app/theme.dart';
+import 'package:time_memo_app/widgets/bottom_app_bar.dart';
 import 'package:time_memo_app/widgets/floatingAcbu.dart';
 import 'firebase_options.dart';
 
@@ -66,6 +68,7 @@ class MyPage extends ConsumerWidget {
         ),
         child: ToDoPage()
       ),
+      bottomNavigationBar: NeuBottomAppBar(),
     );
   }
 }
