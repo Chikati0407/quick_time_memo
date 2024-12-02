@@ -22,9 +22,7 @@ class ToDoPage extends ConsumerWidget {
                 itemCount: tasks.length,
                 itemBuilder: (context, index){
                   return Todoitem(
-                    title: tasks[index]["title"],
-                    subtitle: tasks[index]["content"],
-                    icon: Icons.blender,
+                    task: tasks[index],
                   );
                 },
               );

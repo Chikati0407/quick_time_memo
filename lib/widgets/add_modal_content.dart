@@ -1,20 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neubrutalism_ui/neubrutalism_ui.dart';
+import 'package:time_memo_app/scripts/firestore_access.dart';
 
+final title_provider = StateProvider<String>((ref) => "");
+final content_provider = StateProvider<String>((ref) => "");
 final date_provider = StateProvider<DateTime>((ref) => DateTime.now());
 final time_provider = StateProvider<TimeOfDay>((ref) => TimeOfDay.now());
+final select_chip_provider = StateProvider<int>((ref) => 0);
+final enable_entry_provider = StateProvider<bool>((ref) => false);
 
 class AddModalContent extends ConsumerWidget {
   const AddModalContent({super.key});
 
-
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
+    final title = ref.watch(title_provider);
+    final content = ref.watch(content_provider);
     final DateTime date = ref.watch(date_provider);
     final TimeOfDay time = ref.watch(time_provider);
+    // final selected_index = ref.watch(select_chip_provider);
+    final enable_entry = ref.watch(enable_entry_provider);
 
     final title_textfield = TextField(
       style: TextStyle(
@@ -25,6 +33,10 @@ class AddModalContent extends ConsumerWidget {
           hintText: "新しいタスク",
           hintStyle: TextStyle(fontSize: 24)
       ),
+      onChanged: (value){
+        ref.read(enable_entry_provider.notifier).state = true;
+        ref.read(title_provider.notifier).state = value;
+      },
     );
     final content_container = NeuContainer(
       color: Theme.of(context).colorScheme.surface,
@@ -38,6 +50,7 @@ class AddModalContent extends ConsumerWidget {
             border: InputBorder.none,
             hintText: "詳細を追加",
           ),
+          onChanged: (value) => ref.read(content_provider.notifier).state = value,
         ),
       ),
     );
@@ -156,16 +169,58 @@ class AddModalContent extends ConsumerWidget {
           text: Text("キャンセル"),
           borderRadius: BorderRadius.circular(10),
           buttonWidth: 160,
+          buttonColor: Theme.of(context).colorScheme.primaryContainer,
           onPressed: () => Navigator.of(context).pop(),
         ),
         NeuTextButton(
-          enableAnimation: true,
+          enableAnimation: enable_entry,
           text: Text("タスクに追加"),
           borderRadius: BorderRadius.circular(10),
           buttonWidth: 160,
+          buttonColor:(enable_entry) ? Theme.of(context).colorScheme.primaryContainer : Theme.of(context).colorScheme.surfaceContainerHigh,
+          onPressed: () async {
+            if (enable_entry) {
+              await firestore_add_doc({
+              "title": title,
+              "content": content,
+              "time": Timestamp.fromDate(DateTime(date.year, date.month, date.day, time.hour, time.minute))
+              });
+              ref.read(title_provider.notifier).state = "";
+              ref.read(content_provider.notifier).state = "";
+              ref.read(date_provider.notifier).state = DateTime.now();
+              ref.read(time_provider.notifier).state = TimeOfDay.now();
+              ref.read(enable_entry_provider.notifier).state = false;
+              Navigator.of(context).pop();
+            }
+          }
         ),
       ],
     );
+
+    // 属性一旦保留
+    // final chip_list = SingleChildScrollView(
+    //   scrollDirection: Axis.horizontal,
+    //   child: Row(
+    //     children: List<Widget>.generate(2, (index) {
+    //       return Padding(
+    //         padding: const EdgeInsets.symmetric(horizontal: 4.0),
+    //         child: ChoiceChip(
+    //           avatar: (selected_index == index) ? null : Icon(Icons.add),
+    //           label: Text("ラベル"),
+    //           selected: selected_index == index,
+    //           selectedColor: Theme.of(context).colorScheme.tertiaryContainer,
+    //           labelStyle: TextStyle(
+    //             color: Theme.of(context).colorScheme.onTertiaryContainer,
+    //           ),
+    //           checkmarkColor: Theme.of(context).colorScheme.onTertiaryContainer,
+    //           onSelected: (selected) {
+    //             ref.read(select_chip_provider.notifier).state = index;
+    //           },
+    //         ),
+    //       );
+    //     }).toList(),
+    //   ),
+    // );
 
 
     return Padding(
@@ -187,6 +242,8 @@ class AddModalContent extends ConsumerWidget {
                 date_row,
                 SizedBox(height: 8,),
                 time_row,
+                SizedBox(height: 8,),
+                // chip_list,
                 SizedBox(height: 8,),
                 Divider(),
                 button_row,

@@ -1,6 +1,14 @@
-import 'package:time_memo_app/scripts/firestore_access.dart';
+Map<String, dynamic> datetime_difference(DateTime time,bool largest){
+  final now = DateTime.now();
 
-Future<void> add_task(Map<String, dynamic> data) async {
+  if (largest) {
+    time.difference(now).inHours;
+  } else {
 
-  firestore_add_doc(data);
+  }
+
+  return {
+    "difference": 1,
+  };
 }
+
