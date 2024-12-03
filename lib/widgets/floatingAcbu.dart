@@ -1,8 +1,13 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neubrutalism_ui/neubrutalism_ui.dart';
-import 'package:time_memo_app/widgets/add_modal_content.dart';
 
+// Project imports:
+import 'package:time_memo_app/state/app_state.dart';
+import 'package:time_memo_app/widgets/add_modal_content.dart';
 
 class NeuFloatingActionbutton extends ConsumerWidget {
   NeuFloatingActionbutton({super.key});
@@ -12,16 +17,11 @@ class NeuFloatingActionbutton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-
-
-
-
-
-
+    final visible_appbar = ref.watch(bottom_appbar_provider);
 
     return NeuTextButton(
       buttonWidth: 150,
-      buttonHeight: 75,
+      buttonHeight: (visible_appbar) ? 50 : 75,
       enableAnimation: true,
       text: Text("タスク追加",style: TextStyle(fontSize: 18,color: Theme.of(context).colorScheme.onPrimary),),
       borderRadius: BorderRadius.circular(10),

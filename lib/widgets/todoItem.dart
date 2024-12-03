@@ -1,8 +1,15 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neubrutalism_ui/neubrutalism_ui.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
+
+// Project imports:
 import 'package:time_memo_app/pages/task_page.dart';
+import 'package:time_memo_app/scripts/firestore_access.dart';
+import 'package:time_memo_app/scripts/scripts.dart';
 import 'package:time_memo_app/widgets/inner_url_text.dart';
 
 class Todoitem extends ConsumerWidget {
@@ -10,8 +17,22 @@ class Todoitem extends ConsumerWidget {
 
   final Map<String, dynamic> task;
 
+  String create_time_message(DateTime time){
+    final date_map = datetime_difference(time,true);
+    final msg = date_map["difference"].toString() + date_map["type"][0];
+    return msg;
+  }
+
+  Color create_time_color(BuildContext context, String msg){
+    return (msg[0] != "-") ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+    String time_meaasge = create_time_message(task["time"].toDate());
+    Color time_color = create_time_color(context, time_meaasge);
+
     return Container(
       height: 100,
       margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -19,7 +40,7 @@ class Todoitem extends ConsumerWidget {
         onTap: () async {
           await Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
-              return TaskPage();
+              return TaskPage(task: task,);
             }),
           );
         },
@@ -33,7 +54,10 @@ class Todoitem extends ConsumerWidget {
               children: [
                 SizedBox(width: 8,),
                 RoundCheckBox(
-                  onTap: (value){},
+                  onTap: (value) async {
+                    await Future.delayed(Duration(seconds: 1));
+                    await firestore_remove_doc(task["doc_id"]);
+                  },
                   isChecked: false,
                   checkedColor: Theme.of(context).colorScheme.secondaryContainer,
                   uncheckedColor: Theme.of(context).colorScheme.surfaceContainer,
@@ -50,7 +74,25 @@ class Todoitem extends ConsumerWidget {
                   ),
                 ),
                 Center(
-
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      VerticalDivider(
+                        color: time_color,
+                        width: 4,
+                      ),
+                      Container(
+                        color: Theme.of(context).colorScheme.surfaceContainer,
+                        child: Text(
+                          time_meaasge,
+                          style: TextStyle(
+                            color: time_color,
+                            fontSize: 18,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 SizedBox(width: 16,)
               ],

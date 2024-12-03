@@ -1,7 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neubrutalism_ui/neubrutalism_ui.dart';
+
+// Project imports:
 import 'package:time_memo_app/scripts/firestore_access.dart';
 
 final title_provider = StateProvider<String>((ref) => "");

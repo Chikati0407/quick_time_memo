@@ -1,48 +1,45 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:time_memo_app/widgets/floatingAcbu.dart';
+
+// Project imports:
+import 'package:time_memo_app/state/app_state.dart';
 
 class NeuBottomAppBar extends ConsumerWidget {
   const NeuBottomAppBar({super.key});
 
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+    final visible_appbar = ref.watch(bottom_appbar_provider);
+    final page_index = ref.watch(page_provider);
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      height: 80.0,
+      height: (visible_appbar) ? 80.0 : 0,
+      decoration: BoxDecoration(
+        border: Border.all(
+          width: 4,
+        ),
+      ),
       child: BottomAppBar(
-        elevation: null,
         child: Row(
-          children: <Widget>[
-            IconButton(
-              tooltip: 'Open popup menu',
-              icon: const Icon(Icons.more_vert),
-              onPressed: () {
-                final SnackBar snackBar = SnackBar(
-                  content: const Text('Yay! A SnackBar!'),
-                  action: SnackBarAction(
-                    label: 'Undo',
-                    onPressed: () {},
-                  ),
-                );
-
-                // Find the ScaffoldMessenger in the widget tree
-                // and use it to show a SnackBar.
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SegmentedButton(
+              selected: {page_index},
+              onSelectionChanged: (selected){
+                ref.read(page_provider.notifier).state = selected.first;
               },
+              segments: [
+                ButtonSegment(value: 0,label: Text("ALL"),icon: Icon(Icons.clear_all)),
+                ButtonSegment(value: 1,label: Text("SAFE"),icon: Icon(Icons.browse_gallery_outlined)),
+                ButtonSegment(value: 2,label: Text("OUT"),icon: Icon(Icons.history_outlined)),
+              ],
             ),
-            IconButton(
-              tooltip: 'Search',
-              icon: const Icon(Icons.search),
-              onPressed: () {},
-            ),
-            IconButton(
-              tooltip: 'Favorite',
-              icon: const Icon(Icons.favorite),
-              onPressed: () {},
-            ),
-            Spacer(),
-            NeuFloatingActionbutton()
           ],
         ),
       ),

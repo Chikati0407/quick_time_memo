@@ -1,9 +1,15 @@
 // import 'package:firebase_messaging/firebase_messaging.dart';
+
+// Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/rendering.dart';
+
+// Package imports:
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pattern_background/pattern_background.dart';
+
+// Project imports:
 import 'package:time_memo_app/pages/to_do_page.dart';
 import 'package:time_memo_app/theme.dart';
 import 'package:time_memo_app/widgets/bottom_app_bar.dart';
@@ -38,7 +44,7 @@ class MyToDoApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     return MaterialApp(
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       theme: MaterialTheme().light(),
       darkTheme: MaterialTheme().dark(),
       home: MyPage(),
@@ -52,6 +58,9 @@ class MyPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+    // final visible_appbar = ref.watch(bottom_appbar_provider);
+
     var c1 = Theme.of(context).colorScheme.surface;
     var c2 = Theme.of(context).colorScheme.onSurface;
     final width=MediaQuery.of(context).size.width;
@@ -68,6 +77,7 @@ class MyPage extends ConsumerWidget {
         ),
         child: ToDoPage()
       ),
+      // floatingActionButtonLocation: (visible_appbar) ? FloatingActionButtonLocation.endContained : FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: NeuBottomAppBar(),
     );
   }
