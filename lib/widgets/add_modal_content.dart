@@ -8,13 +8,12 @@ import 'package:neubrutalism_ui/neubrutalism_ui.dart';
 
 // Project imports:
 import 'package:time_memo_app/scripts/firestore_access.dart';
+import 'package:time_memo_app/state/app_state.dart';
+import 'package:time_memo_app/widgets/add_date_button.dart';
 
-final title_provider = StateProvider<String>((ref) => "");
-final content_provider = StateProvider<String>((ref) => "");
-final date_provider = StateProvider<DateTime>((ref) => DateTime.now());
-final time_provider = StateProvider<TimeOfDay>((ref) => TimeOfDay.now());
-final select_chip_provider = StateProvider<int>((ref) => 0);
-final enable_entry_provider = StateProvider<bool>((ref) => false);
+final enable_entry_provider = StateProvider<bool>((ref){
+  return false;
+});
 
 class AddModalContent extends ConsumerWidget {
   const AddModalContent({super.key});
@@ -25,7 +24,6 @@ class AddModalContent extends ConsumerWidget {
     final title = ref.watch(title_provider);
     final content = ref.watch(content_provider);
     final DateTime date = ref.watch(date_provider);
-    final TimeOfDay time = ref.watch(time_provider);
     // final selected_index = ref.watch(select_chip_provider);
     final enable_entry = ref.watch(enable_entry_provider);
 
@@ -39,8 +37,8 @@ class AddModalContent extends ConsumerWidget {
           hintStyle: TextStyle(fontSize: 24)
       ),
       onChanged: (value){
-        ref.read(enable_entry_provider.notifier).state = true;
         ref.read(title_provider.notifier).state = value;
+        ref.read(enable_entry_provider.notifier).state = value.isNotEmpty;
       },
     );
     final content_container = NeuContainer(
@@ -70,46 +68,35 @@ class AddModalContent extends ConsumerWidget {
           buttonHeight: 48,
           text: Text("${date.month}/${date.day}"),
           onPressed: () async {
-            ref.read(date_provider.notifier).state = (await showDatePicker(
+            final _date = (await showDatePicker(
                 context: context,
                 initialDate: date,
                 firstDate: DateTime.now(),
                 lastDate: DateTime.now().add(Duration(days: 365),)
             ))!;
+            ref.read(date_provider.notifier).state = DateTime(_date.year, _date.month, _date.day, date.hour, date.minute);
           },
         ),
         Spacer(),
-        NeuTextButton(
-          enableAnimation: true,
-          borderRadius: BorderRadius.circular(10),
-          buttonWidth: 50,
-          buttonColor: Theme.of(context).colorScheme.tertiary,
-          text: Text("+1d",style: TextStyle(color: Theme.of(context).colorScheme.onTertiary),),
-          onPressed: (){
+        AddDateButton(
+          text: "+1d",
+          function: (){
             ref.watch(date_provider.notifier).state = date.add(Duration(days: 1));
-          },
+          }
         ),
         SizedBox(width: 8,),
-        NeuTextButton(
-          enableAnimation: true,
-          borderRadius: BorderRadius.circular(10),
-          buttonWidth: 50,
-          buttonColor: Theme.of(context).colorScheme.tertiary,
-          text: Text("+2d",style: TextStyle(color: Theme.of(context).colorScheme.onTertiary),),
-          onPressed: (){
+        AddDateButton(
+          text: "+2d",
+          function: (){
             ref.watch(date_provider.notifier).state = date.add(Duration(days: 2));
           },
         ),
         SizedBox(width: 8,),
-        NeuTextButton(
-          enableAnimation: true,
-          borderRadius: BorderRadius.circular(10),
-          buttonWidth: 50,
-          buttonColor: Theme.of(context).colorScheme.tertiary,
-          text: Text("+3d",style: TextStyle(color: Theme.of(context).colorScheme.onTertiary),),
-          onPressed: (){
-            ref.watch(date_provider.notifier).state = date.add(Duration(days: 3));
-          },
+        AddDateButton(
+          text: "+3d",
+            function: (){
+              ref.watch(date_provider.notifier).state = date.add(Duration(days: 3));
+            }
         ),
       ],
     );
@@ -122,45 +109,34 @@ class AddModalContent extends ConsumerWidget {
           buttonColor: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(10),
           buttonHeight: 48,
-          text: Text("${time.hour}:${time.minute}"),
+          text: Text("${date.hour}:${date.minute}"),
           onPressed: () async {
-            ref.read(time_provider.notifier).state = (await showTimePicker(
+            final time = (await showTimePicker(
               context: context,
-              initialTime: time,
+              initialTime: TimeOfDay.fromDateTime(date),
             ))!;
+            ref.read(date_provider.notifier).state = DateTime(date.year, date.month, date.day, time.hour, time.minute);
           },
         ),
         Spacer(),
-        NeuTextButton(
-          enableAnimation: true,
-          borderRadius: BorderRadius.circular(10),
-          buttonWidth: 50,
-          buttonColor: Theme.of(context).colorScheme.tertiary,
-          text: Text("+30m",style: TextStyle(color: Theme.of(context).colorScheme.onTertiary),),
-          onPressed: (){
-            ref.watch(time_provider.notifier).state = TimeOfDay.fromDateTime(DateTime(0,0,0,time.hour,time.minute).add(Duration(minutes: 30)));
+        AddDateButton(
+          text: "+30m",
+          function: (){
+            ref.watch(date_provider.notifier).state = date.add(Duration(minutes: 30));
           },
         ),
         SizedBox(width: 8,),
-        NeuTextButton(
-          enableAnimation: true,
-          borderRadius: BorderRadius.circular(10),
-          buttonWidth: 50,
-          buttonColor: Theme.of(context).colorScheme.tertiary,
-          text: Text("+1h",style: TextStyle(color: Theme.of(context).colorScheme.onTertiary),),
-          onPressed: (){
-            ref.watch(time_provider.notifier).state = TimeOfDay.fromDateTime(DateTime(0,0,0,time.hour,time.minute).add(Duration(hours: 1)));
+        AddDateButton(
+          text: "+1h",
+          function: (){
+            ref.watch(date_provider.notifier).state = date.add(Duration(hours: 1));
           },
         ),
         SizedBox(width: 8,),
-        NeuTextButton(
-          enableAnimation: true,
-          borderRadius: BorderRadius.circular(10),
-          buttonWidth: 50,
-          buttonColor: Theme.of(context).colorScheme.tertiary,
-          text: Text("+2h",style: TextStyle(color: Theme.of(context).colorScheme.onTertiary),),
-          onPressed: (){
-            ref.watch(time_provider.notifier).state = TimeOfDay.fromDateTime(DateTime(0,0,0,time.hour,time.minute).add(Duration(hours: 2)));
+        AddDateButton(
+          text: "+2h",
+          function: (){
+            ref.watch(date_provider.notifier).state = date.add(Duration(hours: 2));
           },
         ),
       ],
@@ -188,12 +164,11 @@ class AddModalContent extends ConsumerWidget {
               await firestore_add_doc({
               "title": title,
               "content": content,
-              "time": Timestamp.fromDate(DateTime(date.year, date.month, date.day, time.hour, time.minute))
+              "time": Timestamp.fromDate(date)
               });
               ref.read(title_provider.notifier).state = "";
               ref.read(content_provider.notifier).state = "";
               ref.read(date_provider.notifier).state = DateTime.now();
-              ref.read(time_provider.notifier).state = TimeOfDay.now();
               ref.read(enable_entry_provider.notifier).state = false;
               Navigator.of(context).pop();
             }

@@ -44,8 +44,8 @@ class MyToDoApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     return MaterialApp(
-      themeMode: ThemeMode.dark,
-      theme: MaterialTheme().light(),
+      // themeMode: (ref.read(test_mode_provider)) ? ThemeMode.dark : ThemeMode.light,
+      theme : MaterialTheme().light(),
       darkTheme: MaterialTheme().dark(),
       home: MyPage(),
     );

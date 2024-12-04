@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neubrutalism_ui/neubrutalism_ui.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
+import 'package:time_memo_app/pages/task_page.dart';
 
 // Project imports:
-import 'package:time_memo_app/pages/task_page.dart';
 import 'package:time_memo_app/scripts/firestore_access.dart';
 import 'package:time_memo_app/scripts/scripts.dart';
 import 'package:time_memo_app/widgets/inner_url_text.dart';
@@ -19,8 +19,10 @@ class Todoitem extends ConsumerWidget {
 
   String create_time_message(DateTime time){
     final date_map = datetime_difference(time,true);
-    final msg = date_map["difference"].toString() + date_map["type"][0];
-    return msg;
+
+    final String difference = date_map["difference"].toString();
+    final String type = date_map["type"][0];
+    return difference + type;
   }
 
   Color create_time_color(BuildContext context, String msg){
@@ -82,12 +84,16 @@ class Todoitem extends ConsumerWidget {
                         width: 4,
                       ),
                       Container(
+                        height: 30,
+                        width: 50,
                         color: Theme.of(context).colorScheme.surfaceContainer,
-                        child: Text(
-                          time_meaasge,
-                          style: TextStyle(
-                            color: time_color,
-                            fontSize: 18,
+                        child: Center(
+                          child: Text(
+                            time_meaasge,
+                            style: TextStyle(
+                              color: time_color,
+                              fontSize: 18,
+                            ),
                           ),
                         ),
                       )

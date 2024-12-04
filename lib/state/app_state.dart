@@ -2,13 +2,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final title_provider = StateProvider<String>((ref) => "");
+final content_provider = StateProvider<String>((ref) => "");
+final date_provider = StateProvider<DateTime>((ref) => DateTime.now());
+
+
 final page_provider = StateProvider<int>((ref){
   return 0;
 });
 
+
 final bottom_appbar_provider = StateProvider<bool>((ref){
   return true;
 });
+
 
 final docs_provider = StreamProvider<List<Map<String,dynamic>>>((ref){
 

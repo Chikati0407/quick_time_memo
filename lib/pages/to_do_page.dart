@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
+import 'package:time_memo_app/scripts/scripts.dart';
 import 'package:time_memo_app/state/app_state.dart';
 import 'package:time_memo_app/widgets/todoItem.dart';
 
@@ -29,35 +30,41 @@ class ToDoPage extends ConsumerWidget {
             loading: () => Center(child: CircularProgressIndicator(),),
             data: (tasks){
 
+              List<Map<String, dynamic>> processed_tasks = [];
+
               switch(page_index){
                 case 0:
-                tasks.sort((a,b) => b["time"].compareTo(a["time"]));
-                case 1:
+                  tasks.sort((a,b) => a["time"].compareTo(b["time"]));
+                  processed_tasks = tasks;
+                case 1:   //未来のタスク
+                  tasks.sort((a,b) => a["time"].compareTo(b["time"]));
+                  tasks.forEach((task){
+                    if (datetime_difference(task["time"].toDate(),true)["difference"] >= 0){
+                      processed_tasks.add(task);
+                    }
+                  });
 
-
-                case 2:
-
+                case 2:   //過去のタスク
+                  tasks.sort((a,b) => b["time"].compareTo(a["time"]));
+                  tasks.forEach((task){
+                    if (datetime_difference(task["time"].toDate(),true)["difference"] < 0){
+                      processed_tasks.add(task);
+                    }
+                  });
               }
-
-              //かこのタスク
-              // tasks.sort((a,b) => b["time"].compareTo(a["time"]));
-
-              // 未来のタスク
-              // tasks.sort((a,b) => a["time"].compareTo(a["time"]));
 
 
               return ListView.builder(
-                itemCount: tasks.length,
+                itemCount: processed_tasks.length,
                 itemBuilder: (context, index){
-                  // final DateTime date = tasks[index]["time"].toDate();
-                  // if (datetime_difference(date,true)["difference"] < 0) {
-                  //   return Todoitem(
-                  //     task: tasks[index],
-                  //   );
-                  // } else {
-                  //   return SizedBox();
-                  // }
-                  return Todoitem(task: tasks[index]);
+                  if (processed_tasks[index]["title"] != ""){
+                    return Todoitem(task: processed_tasks[index]);
+                  } else {
+                    return Divider(
+                      height: 16,
+                      color: Theme.of(context).colorScheme.tertiary,
+                    );
+                  }
                 },
               );
             }
