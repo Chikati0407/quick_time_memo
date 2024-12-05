@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neubrutalism_ui/neubrutalism_ui.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
-import 'package:time_memo_app/pages/task_page.dart';
 
 // Project imports:
+import 'package:time_memo_app/pages/task_page.dart';
 import 'package:time_memo_app/scripts/firestore_access.dart';
 import 'package:time_memo_app/scripts/scripts.dart';
 import 'package:time_memo_app/widgets/inner_url_text.dart';
