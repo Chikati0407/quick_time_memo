@@ -34,7 +34,7 @@ exports.scheduledFunction = functions.pubsub.schedule("every 5 minutes").onRun( 
           }
         },
         data: {
-          data: 'test',
+          data: doc.id,
         },
   
         token: fcm_token,

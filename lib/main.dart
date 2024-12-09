@@ -1,6 +1,7 @@
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
 // Flutter imports:
+
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -28,8 +29,23 @@ void main() async {
   // final fcmToken = await messagingInstance.getToken();
   // debugPrint('FCM TOKEN: $fcmToken');
 
+  // final flutterLocalNotoficationsPlagin = FlutterLocalNotificationsPlugin();
+  // if (Platform.isAndroid) {
+  //   final androidImplementation = flutterLocalNotoficationsPlagin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+  //   await androidImplementation?.createNotificationChannel(
+  //     const AndroidNotificationChannel(
+  //       "default_notification_channel",
+  //       "Task",
+  //       importance: Importance.max
+  //     )
+  //   );
+  //   await androidImplementation?.requestNotificationsPermission();
+  // }
+  //
+
+
   runApp(
-    ProviderScope(child: MyToDoApp()),
+    const ProviderScope(child: MyToDoApp()),
   );
 }
 
@@ -42,7 +58,7 @@ class MyToDoApp extends ConsumerWidget {
       // themeMode: (ref.read(test_mode_provider)) ? ThemeMode.dark : ThemeMode.light,
       theme: MaterialTheme().light(),
       darkTheme: MaterialTheme().dark(),
-      home: MyPage(),
+      home: const MyPage(),
     );
   }
 }
@@ -70,7 +86,7 @@ class MyPage extends ConsumerWidget {
           ),
           child: ToDoPage()),
       // floatingActionButtonLocation: (visible_appbar) ? FloatingActionButtonLocation.endContained : FloatingActionButtonLocation.endFloat,
-      bottomNavigationBar: NeuBottomAppBar(),
+      bottomNavigationBar: const NeuBottomAppBar(),
     );
   }
 }

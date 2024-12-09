@@ -10,7 +10,7 @@ import 'package:time_memo_app/widgets/inner_url_text.dart';
 
 void main() async {
   runApp(
-    ProviderScope(
+    const ProviderScope(
         child: Test_App()
     ),
   );
@@ -25,7 +25,7 @@ class Test_App extends ConsumerWidget {
     return MaterialApp(
       theme: MaterialTheme().light(),
       darkTheme: MaterialTheme().dark(),
-      home: Scaffold(
+      home: const Scaffold(
         body: Center(
           child: InnerUrlText(text: "https://zenn.dev/kisia_flutter/articles/3219aea98d6016")
         ),

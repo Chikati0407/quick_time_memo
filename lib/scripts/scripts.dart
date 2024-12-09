@@ -37,6 +37,8 @@ Map<String, dynamic> datetime_difference(DateTime time,
       result["minutes"] = diff.inMinutes - diff.inHours * 60;
     } else if (diff.inMinutes != 0) {
       result["minutes"] = diff.inMinutes;
+    } else {
+      result["zero"] = 0;
     }
 
     return result;

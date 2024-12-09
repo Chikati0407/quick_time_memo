@@ -96,7 +96,6 @@ class CustomTextSpan {
             mode: LaunchMode.platformDefault,
             webOnlyWindowName: "_blank"
           );
-          print("押された");
         },
     );
   }
