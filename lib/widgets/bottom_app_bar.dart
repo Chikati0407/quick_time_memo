@@ -14,7 +14,7 @@ class NeuBottomAppBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final visible_appbar = ref.watch(bottom_appbar_provider);
+    final visible_appbar = ref.watch(bottom_appbar_visible_provider);
     final page_index = ref.watch(page_provider);
 
     return AnimatedContainer(

@@ -2,6 +2,7 @@
 
 // Flutter imports:
 
+// Flutter imports:
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -11,6 +12,7 @@ import 'package:pattern_background/pattern_background.dart';
 
 // Project imports:
 import 'package:time_memo_app/pages/to_do_page.dart';
+import 'package:time_memo_app/state/app_state.dart';
 import 'package:time_memo_app/theme.dart';
 import 'package:time_memo_app/widgets/bottom_app_bar.dart';
 import 'package:time_memo_app/widgets/floatingAcbu.dart';
@@ -68,24 +70,18 @@ class MyPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final visible_appbar = ref.watch(bottom_appbar_provider);
+    final visibleAppbar = ref.watch(bottom_appbar_visible_provider);
 
-    var c1 = Theme.of(context).colorScheme.surface;
-    var c2 = Theme.of(context).colorScheme.onSurface;
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: c1,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       floatingActionButton: NeuFloatingActionbutton(),
       body: CustomPaint(
-          size: Size(width, height),
           painter: DotPainter(
-            dotColor: c2,
+            dotColor: Theme.of(context).colorScheme.onSurface,
             dotRadius: 1,
             spacing: 10,
           ),
-          child: ToDoPage()),
-      // floatingActionButtonLocation: (visible_appbar) ? FloatingActionButtonLocation.endContained : FloatingActionButtonLocation.endFloat,
+          child: const ToDoPage()),
       bottomNavigationBar: const NeuBottomAppBar(),
     );
   }

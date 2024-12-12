@@ -12,7 +12,7 @@ final page_provider = StateProvider<int>((ref){
 });
 
 
-final bottom_appbar_provider = StateProvider<bool>((ref){
+final bottom_appbar_visible_provider = StateProvider<bool>((ref){
   return true;
 });
 

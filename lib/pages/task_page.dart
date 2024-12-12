@@ -1,8 +1,8 @@
 // Flutter imports:
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neubrutalism_ui/neubrutalism_ui.dart';
 import 'package:pattern_background/pattern_background.dart';
@@ -10,7 +10,9 @@ import 'package:pattern_background/pattern_background.dart';
 // Project imports:
 import 'package:time_memo_app/scripts/firestore_access.dart';
 import 'package:time_memo_app/scripts/scripts.dart';
+import 'package:time_memo_app/state/app_state.dart';
 import 'package:time_memo_app/widgets/add_date_button.dart';
+import 'package:time_memo_app/widgets/add_modal_content.dart';
 import 'package:time_memo_app/widgets/inner_url_text.dart';
 
 class TaskPage extends ConsumerStatefulWidget {
@@ -101,13 +103,42 @@ class _TaskPageState extends ConsumerState<TaskPage> {
       ),
     );
 
+    final change_button = SizedBox(
+      width: double.infinity,
+      child: NeuTextButton(
+        enableAnimation: true,
+        borderRadius: BorderRadius.circular(10),
+        buttonColor: Theme.of(context).colorScheme.tertiaryContainer,
+        text: Text("タスクの変更",style: TextStyle(color: Theme.of(context).colorScheme.onTertiaryContainer),),
+        onPressed: () async {
+          ref.read(title_provider.notifier).state = task["title"];
+          ref.read(content_provider.notifier).state = task["content"];
+          ref.read(date_provider.notifier).state = task["time"].toDate();
+          ref.read(enable_entry_provider.notifier).state = true;
+
+          await showModalBottomSheet<void>(
+            showDragHandle: true,
+            enableDrag: false,
+            context: context,
+            builder: (context) {
+              return AddModalContent(
+                doc_id: task["doc_id"],
+              );
+            },
+          );
+          await Future.delayed(Duration(milliseconds: 200));
+          Navigator.of(context).pop();
+        },
+      ),
+    );
+
     final completion_button = Container(
       width: double.infinity,
       child: NeuTextButton(
         enableAnimation: true,
         borderRadius: BorderRadius.circular(10),
         buttonColor: Theme.of(context).colorScheme.primaryContainer,
-        text: const Text("完了にする"),
+        text: Text("完了にする",style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer),),
         onPressed: (){
           firestore_remove_doc(task["doc_id"]);
           Navigator.of(context).pop();
@@ -137,7 +168,7 @@ class _TaskPageState extends ConsumerState<TaskPage> {
           buttonColor: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(10),
           buttonHeight: 48,
-          text: Text("${task["time"].toDate().year}/${task["time"].toDate().month}/${task["time"].toDate().day}-${task["time"].toDate().hour}:${task["time"].toDate().minute}"),
+          text: Text("${task["time"].toDate().year}/${task["time"].toDate().month}/${task["time"].toDate().day}-${task["time"].toDate().hour}:${task["time"].toDate().minute.toString().padLeft(2,"0")}"),
           onPressed: () async {
             final DateTime new_date = (await showDatePicker(
                 context: context,
@@ -204,6 +235,8 @@ class _TaskPageState extends ConsumerState<TaskPage> {
                         const SizedBox(height: 16,),
                         change_time_row,
                         const Spacer(),
+                        change_button,
+                        const SizedBox(height: 8,),
                         completion_button,
                       ],
                     ),

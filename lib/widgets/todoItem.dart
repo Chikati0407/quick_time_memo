@@ -1,5 +1,7 @@
 // Flutter imports:
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 // Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,75 +39,83 @@ class Todoitem extends ConsumerWidget {
 
     return Container(
       height: 100,
-      margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
-      child: InkWell(
-        onTap: () async {
-          await Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) {
-              return TaskPage(task: task,);
-            }),
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: OpenContainer(
+        transitionDuration: const Duration(milliseconds: 300),
+        openColor: Theme.of(context).colorScheme.surface,
+        closedColor: Theme.of(context).colorScheme.surface,
+        closedShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16)
+        ),
+        openShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16)
+        ),
+
+        openBuilder: (context, _){
+          return TaskPage(task: task);
+        },
+        closedBuilder: (context, _){
+          return NeuContainer(
+              offset: const Offset(5,5),
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).colorScheme.surfaceContainer,
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 8,),
+                    RoundCheckBox(
+                      onTap: (value) async {
+                        await Future.delayed(const Duration(seconds: 1));
+                        await firestore_remove_doc(task["doc_id"]);
+                      },
+                      isChecked: false,
+                      checkedColor: Theme.of(context).colorScheme.secondaryContainer,
+                      uncheckedColor: Theme.of(context).colorScheme.surfaceContainer,
+                      borderColor: Theme.of(context).colorScheme.onSecondaryContainer,
+                      border: Border.all(width: 3),
+                      checkedWidget: Icon(Icons.check, color: Theme.of(context).colorScheme.onSecondaryContainer,),
+                      // uncheckedWidget: Icon(Icons.clear,color: Theme.of(context).colorScheme.onSecondaryContainer,),
+                    ),
+                    const SizedBox(width: 16,),
+                    Expanded(
+                      child: ListTile(
+                        title: Text(task["title"]),
+                        subtitle: InnerUrlText(text: task["content"],maxLines: 2,), //textoverflowの実装から
+                      ),
+                    ),
+                    Center(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          VerticalDivider(
+                            color: time_color,
+                            width: 4,
+                          ),
+                          Container(
+                            height: 30,
+                            width: 50,
+                            color: Theme.of(context).colorScheme.surfaceContainer,
+                            child: Center(
+                              child: Text(
+                                time_meaasge,
+                                style: TextStyle(
+                                  color: time_color,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 16,)
+                  ],
+                ),
+              )
           );
         },
-        child: NeuContainer(
-          offset: Offset(5,5),
-          borderRadius: BorderRadius.circular(16),
-          color: Theme.of(context).colorScheme.surfaceContainer,
-          child: Padding(
-            padding: EdgeInsets.all(8),
-            child: Row(
-              children: [
-                SizedBox(width: 8,),
-                RoundCheckBox(
-                  onTap: (value) async {
-                    await Future.delayed(Duration(seconds: 1));
-                    await firestore_remove_doc(task["doc_id"]);
-                  },
-                  isChecked: false,
-                  checkedColor: Theme.of(context).colorScheme.secondaryContainer,
-                  uncheckedColor: Theme.of(context).colorScheme.surfaceContainer,
-                  borderColor: Theme.of(context).colorScheme.onSecondaryContainer,
-                  border: Border.all(width: 3),
-                  checkedWidget: Icon(Icons.check, color: Theme.of(context).colorScheme.onSecondaryContainer,),
-                  // uncheckedWidget: Icon(Icons.clear,color: Theme.of(context).colorScheme.onSecondaryContainer,),
-                ),
-                SizedBox(width: 16,),
-                Expanded(
-                  child: ListTile(
-                    title: Text(task["title"]),
-                    subtitle: InnerUrlText(text: task["content"],maxLines: 2,), //textoverflowの実装から
-                  ),
-                ),
-                Center(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      VerticalDivider(
-                        color: time_color,
-                        width: 4,
-                      ),
-                      Container(
-                        height: 30,
-                        width: 50,
-                        color: Theme.of(context).colorScheme.surfaceContainer,
-                        child: Center(
-                          child: Text(
-                            time_meaasge,
-                            style: TextStyle(
-                              color: time_color,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(width: 16,)
-              ],
-            ),
-          )
-        ),
-      ),
+      ).animate().fadeIn()
     );
   }
 }

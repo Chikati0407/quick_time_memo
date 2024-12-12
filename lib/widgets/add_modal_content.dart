@@ -15,19 +15,24 @@ final enable_entry_provider = StateProvider<bool>((ref){
   return false;
 });
 
+
+
+
 class AddModalContent extends ConsumerWidget {
-  const AddModalContent({super.key});
+  const AddModalContent({super.key, this.doc_id});
+
+  final String? doc_id;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     final title = ref.watch(title_provider);
     final content = ref.watch(content_provider);
     final DateTime date = ref.watch(date_provider);
     // final selected_index = ref.watch(select_chip_provider);
     final enable_entry = ref.watch(enable_entry_provider);
 
-    final title_textfield = TextField(
+    final title_textfield = TextFormField(
+      initialValue: title,
       style: TextStyle(
         fontSize: 24,
       ),
@@ -46,7 +51,8 @@ class AddModalContent extends ConsumerWidget {
       borderRadius: BorderRadius.circular(10),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: TextField(
+        child: TextFormField(
+          initialValue: content,
           keyboardType: TextInputType.multiline,
           maxLines: 3,
           decoration: InputDecoration(
@@ -79,10 +85,10 @@ class AddModalContent extends ConsumerWidget {
         ),
         Spacer(),
         AddDateButton(
-          text: "+1d",
-          function: (){
-            ref.watch(date_provider.notifier).state = date.add(Duration(days: 1));
-          }
+            text: "+1d",
+            function: (){
+              ref.watch(date_provider.notifier).state = date.add(Duration(days: 1));
+            }
         ),
         SizedBox(width: 8,),
         AddDateButton(
@@ -93,7 +99,7 @@ class AddModalContent extends ConsumerWidget {
         ),
         SizedBox(width: 8,),
         AddDateButton(
-          text: "+3d",
+            text: "+3d",
             function: (){
               ref.watch(date_provider.notifier).state = date.add(Duration(days: 3));
             }
@@ -109,7 +115,7 @@ class AddModalContent extends ConsumerWidget {
           buttonColor: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(10),
           buttonHeight: 48,
-          text: Text("${date.hour}:${date.minute}"),
+          text: Text("${date.hour}:${date.minute.toString().padLeft(2,"0")}"),
           onPressed: () async {
             final time = (await showTimePicker(
               context: context,
@@ -151,28 +157,43 @@ class AddModalContent extends ConsumerWidget {
           borderRadius: BorderRadius.circular(10),
           buttonWidth: 160,
           buttonColor: Theme.of(context).colorScheme.primaryContainer,
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: (){
+            ref.read(title_provider.notifier).state = "";
+            ref.read(content_provider.notifier).state = "";
+            ref.read(date_provider.notifier).state = DateTime.now();
+            ref.read(enable_entry_provider.notifier).state = false;
+            Navigator.of(context).pop();
+          },
         ),
         NeuTextButton(
-          enableAnimation: enable_entry,
-          text: Text("タスクに追加"),
-          borderRadius: BorderRadius.circular(10),
-          buttonWidth: 160,
-          buttonColor:(enable_entry) ? Theme.of(context).colorScheme.primaryContainer : Theme.of(context).colorScheme.surfaceContainerHigh,
-          onPressed: () async {
-            if (enable_entry) {
-              await firestore_add_doc({
-              "title": title,
-              "content": content,
-              "time": Timestamp.fromDate(date)
-              });
-              ref.read(title_provider.notifier).state = "";
-              ref.read(content_provider.notifier).state = "";
-              ref.read(date_provider.notifier).state = DateTime.now();
-              ref.read(enable_entry_provider.notifier).state = false;
-              Navigator.of(context).pop();
+            enableAnimation: enable_entry,
+            text: Text("決定"),
+            borderRadius: BorderRadius.circular(10),
+            buttonWidth: 160,
+            buttonColor:(enable_entry) ? Theme.of(context).colorScheme.primaryContainer : Theme.of(context).colorScheme.surfaceContainerHigh,
+            onPressed: () async {
+              if (enable_entry) {
+                if (doc_id == null){
+                  await firestore_add_doc({
+                    "title": title,
+                    "content": content,
+                    "time": Timestamp.fromDate(date)
+                  });
+                } else {
+                  await firestore_change_field(doc_id!, {
+                    "title": title,
+                    "content": content,
+                    "time": Timestamp.fromDate(date),
+                  });
+                }
+
+                ref.read(title_provider.notifier).state = "";
+                ref.read(content_provider.notifier).state = "";
+                ref.read(date_provider.notifier).state = DateTime.now();
+                ref.read(enable_entry_provider.notifier).state = false;
+                Navigator.of(context).pop();
+              }
             }
-          }
         ),
       ],
     );
@@ -231,5 +252,6 @@ class AddModalContent extends ConsumerWidget {
             )),
       ),
     );
+
   }
 }
