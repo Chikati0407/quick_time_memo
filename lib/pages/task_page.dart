@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neubrutalism_ui/neubrutalism_ui.dart';
 import 'package:pattern_background/pattern_background.dart';
@@ -11,11 +10,11 @@ import 'package:pattern_background/pattern_background.dart';
 // Project imports:
 import 'package:time_memo_app/scripts/firestore_access.dart';
 import 'package:time_memo_app/scripts/scripts.dart';
+import 'package:time_memo_app/scripts/url_suggest.dart';
 import 'package:time_memo_app/state/app_state.dart';
 import 'package:time_memo_app/widgets/add_date_button.dart';
 import 'package:time_memo_app/widgets/add_modal_content.dart';
 import 'package:time_memo_app/widgets/inner_url_text.dart';
-import 'package:time_memo_app/widgets/todoItem.dart';
 
 class TaskPage extends ConsumerStatefulWidget {
   const TaskPage({super.key, required this.task});
@@ -32,16 +31,6 @@ class _TaskPageState extends ConsumerState<TaskPage> {
 
   Map<String, dynamic> task;
 
-  String create_difference_message(DateTime time){
-    String msg = "";
-    final data_map = datetime_difference(time);
-
-    data_map.forEach((key, value){
-      msg += value.toString() + key[0] + " ";
-    });
-
-    return msg;
-  }
 
   Future<void> change_field(Timestamp stamp) async {
     await firestore_change_field(task["doc_id"], {
@@ -51,11 +40,15 @@ class _TaskPageState extends ConsumerState<TaskPage> {
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
 
-    final difference_message = create_difference_message(task["time"].toDate());
-    final difference_color = (difference_message[0] != "-") ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary;
+    final difference_message = create_full_difference_message(task["time"].toDate());
+    final difference_color = create_time_color(context, difference_message);
+
+    final future_url_suggest = create_url_suggest(task["content"]);
 
     final difference_text = Container(
       height: 60,
@@ -75,31 +68,74 @@ class _TaskPageState extends ConsumerState<TaskPage> {
         minHeight: 60,
       ),
       child: Center(
-        child: Text(
+        child: Tooltip(
+          message: task["title"],
+          child: Text(
             task["title"],
             style: const TextStyle(fontSize: 32),
             maxLines: 3,
-            overflow: TextOverflow.ellipsis
+            overflow: TextOverflow.ellipsis,
+
+          ),
         ),
       ),
     );
 
-    final content_container = Container(
-      constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.4,
-      ),
+    final content_container = Expanded(
       child: NeuContainer(
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(10),
         width: double.infinity,
-        child: SingleChildScrollView(
-          child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Wrap(
-                children: [
-                  InnerUrlText(text: task["content"],style: const TextStyle(fontSize: 20),),
-                ],
-              )
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    children: [
+                      InnerUrlText(text: task["content"],style: const TextStyle(fontSize: 20),),
+                    ],
+                  ),
+                ),
+              ),
+              FutureBuilder(
+                future: future_url_suggest,
+                builder: (context, snapshot){
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (snapshot.error != null) {
+                    return Center(
+                      child: Text('エラーがおきました: ${snapshot.error}'),
+                    );
+                  }
+
+                  if (snapshot.data!.isEmpty) {
+                    return const SizedBox();
+                  }
+
+                  return Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.only(top: 8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      borderRadius: BorderRadius.circular(6)
+                    ),
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: snapshot.data!,
+                    ),
+                  );
+                }
+              ),
+            ],
           ),
         ),
       ),
@@ -128,7 +164,7 @@ class _TaskPageState extends ConsumerState<TaskPage> {
             },
           );
 
-          await Future.delayed(Duration(seconds: 1));    //更新待ち
+          await Future.delayed(const Duration(seconds: 1));    //更新待ち
 
           final List<Map<String, dynamic>> _list = ref.read(docs_provider).value!;
 
@@ -246,7 +282,7 @@ class _TaskPageState extends ConsumerState<TaskPage> {
                         (task["content"].isNotEmpty) ? content_container : const SizedBox(),
                         const SizedBox(height: 16,),
                         change_time_row,
-                        const Spacer(),
+                        (task["content"].isNotEmpty) ? const SizedBox(height: 8) : const Spacer(),
                         change_button,
                         const SizedBox(height: 8,),
                         completion_button,

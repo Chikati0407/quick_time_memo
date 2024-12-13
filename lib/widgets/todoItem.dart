@@ -19,23 +19,16 @@ class Todoitem extends ConsumerWidget {
 
   final Map<String, dynamic> task;
 
-  String create_time_message(DateTime time){
-    final date_map = datetime_difference(time,true);
 
-    final String difference = date_map["difference"].toString();
-    final String type = date_map["type"][0];
-    return difference + type;
-  }
 
-  Color create_time_color(BuildContext context, String msg){
-    return (msg[0] != "-") ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary;
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    String time_meaasge = create_time_message(task["time"].toDate());
+    String time_meaasge = create_short_time_message(task["time"].toDate());
     Color time_color = create_time_color(context, time_meaasge);
+
+    String full_time_message = create_full_difference_message(task["time"].toDate());
 
     return Container(
       height: 100,
@@ -68,7 +61,7 @@ class Todoitem extends ConsumerWidget {
                       const SizedBox(width: 8,),
                       RoundCheckBox(
                         onTap: (value) async {
-                          await Future.delayed(const Duration(seconds: 1));
+                          await Future.delayed(const Duration(milliseconds: 500));
                           await firestore_remove_doc(task["doc_id"]);
                         },
                         isChecked: false,
@@ -86,6 +79,7 @@ class Todoitem extends ConsumerWidget {
                             task["title"],
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
+
                           ),
                           subtitle: InnerUrlText(text: task["content"],maxLines: 2,), //textoverflowの実装から
                         ),
@@ -103,11 +97,14 @@ class Todoitem extends ConsumerWidget {
                               width: 50,
                               color: Theme.of(context).colorScheme.surfaceContainer,
                               child: Center(
-                                child: Text(
-                                  time_meaasge,
-                                  style: TextStyle(
-                                    color: time_color,
-                                    fontSize: 18,
+                                child: Tooltip(
+                                  message: full_time_message,
+                                  child: Text(
+                                    time_meaasge,
+                                    style: TextStyle(
+                                      color: time_color,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
                               ),

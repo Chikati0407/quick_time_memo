@@ -70,18 +70,7 @@ class CustomTextSpan {
   const CustomTextSpan();
 
 
-
   static TextSpan urlTextSpan(String text,TextStyle? style, BuildContext context) {
-    // return WidgetSpan(
-    //   child: GestureDetector(
-    //     onTap: (){
-    //       launchUrl(Uri.parse(text));
-    //     },
-    //     onLongPress: (){
-    //       launchUrl(Uri.parse(text));
-    //     },
-    //   )
-    // );
     return TextSpan(
       text: text,
       style: TextStyle(

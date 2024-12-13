@@ -6,7 +6,10 @@ const { Timestamp } = require("firebase-admin/firestore");
 admin.initializeApp();
 const firestore = admin.firestore();
 
-const fcm_token = "cINKbFkHQYiglejP6zo3eM:APA91bEWJeyU03fdetCDX9JEif5RBHNUoUkLoWJaViokwrknf4vbn9IKygw7ByLSnzXFoL-9RvPxikvl6yCZmhpLsOby0RZmB0IF0eBnlkdbfwgqP8848L0";
+const fcm_token_snap = await firestore.collection("token").doc("now_token").get();
+fcm_token = fcm_token_snap.data["token"];
+
+console.log(`とーくん：${fcm_token}`)
 
 
 exports.scheduledFunction = functions.pubsub.schedule("every 5 minutes").onRun( async (context)  => {

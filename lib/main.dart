@@ -1,6 +1,7 @@
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
 // Flutter imports:
+import 'dart:io';
 
 // Flutter imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,6 +19,7 @@ import 'package:time_memo_app/scripts/firestore_access.dart';
 import 'package:time_memo_app/theme.dart';
 import 'package:time_memo_app/widgets/bottom_app_bar.dart';
 import 'package:time_memo_app/widgets/floatingAcbu.dart';
+import 'package:universal_platform/universal_platform.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -27,13 +29,15 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  final messagingInstance = FirebaseMessaging.instance;
-  messagingInstance.requestPermission();
-  final fcmToken = await messagingInstance.getToken();
-  await FirebaseFirestore.instance.collection("token").doc("now_token").set({"token": fcmToken});
-
-
-
+  if (UniversalPlatform.isMobile){
+    print("Mobileだぜ");
+    final messagingInstance = FirebaseMessaging.instance;
+    messagingInstance.requestPermission();
+    final fcmToken = await messagingInstance.getToken();
+    await FirebaseFirestore.instance.collection("token").doc("now_token").set({"token": fcmToken});
+  } else if (UniversalPlatform.isDesktopOrWeb) {
+    print("DesktopかWebだぜ！");
+  }
 
   runApp(
     const ProviderScope(child: MyToDoApp()),

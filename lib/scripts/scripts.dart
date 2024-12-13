@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 Map<String, dynamic> datetime_difference(DateTime time,
     [bool largest = false]) {
   final now = DateTime.now();
@@ -43,4 +45,30 @@ Map<String, dynamic> datetime_difference(DateTime time,
 
     return result;
   }
+}
+
+
+String create_short_time_message(DateTime time){
+  final date_map = datetime_difference(time,true);
+
+  final String difference = date_map["difference"].toString();
+  final String type = date_map["type"][0];
+  return difference + type;
+}
+
+
+String create_full_difference_message(DateTime time){
+  String msg = "";
+  final data_map = datetime_difference(time);
+
+  data_map.forEach((key, value){
+    msg += value.toString() + key[0] + " ";
+  });
+
+  return msg;
+}
+
+
+Color create_time_color(BuildContext context, String msg){
+  return (msg[0] != "-") ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary;
 }
