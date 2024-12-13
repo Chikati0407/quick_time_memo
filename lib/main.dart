@@ -3,6 +3,8 @@
 // Flutter imports:
 
 // Flutter imports:
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -12,7 +14,7 @@ import 'package:pattern_background/pattern_background.dart';
 
 // Project imports:
 import 'package:time_memo_app/pages/to_do_page.dart';
-import 'package:time_memo_app/state/app_state.dart';
+import 'package:time_memo_app/scripts/firestore_access.dart';
 import 'package:time_memo_app/theme.dart';
 import 'package:time_memo_app/widgets/bottom_app_bar.dart';
 import 'package:time_memo_app/widgets/floatingAcbu.dart';
@@ -25,25 +27,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // final messagingInstance = FirebaseMessaging.instance;
-  // messagingInstance.requestPermission();
-  //
-  // final fcmToken = await messagingInstance.getToken();
-  // debugPrint('FCM TOKEN: $fcmToken');
+  final messagingInstance = FirebaseMessaging.instance;
+  messagingInstance.requestPermission();
+  final fcmToken = await messagingInstance.getToken();
+  await FirebaseFirestore.instance.collection("token").doc("now_token").set({"token": fcmToken});
 
-  // final flutterLocalNotoficationsPlagin = FlutterLocalNotificationsPlugin();
-  // if (Platform.isAndroid) {
-  //   final androidImplementation = flutterLocalNotoficationsPlagin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-  //   await androidImplementation?.createNotificationChannel(
-  //     const AndroidNotificationChannel(
-  //       "default_notification_channel",
-  //       "Task",
-  //       importance: Importance.max
-  //     )
-  //   );
-  //   await androidImplementation?.requestNotificationsPermission();
-  // }
-  //
+
 
 
   runApp(
@@ -70,8 +59,6 @@ class MyPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final visibleAppbar = ref.watch(bottom_appbar_visible_provider);
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       floatingActionButton: NeuFloatingActionbutton(),

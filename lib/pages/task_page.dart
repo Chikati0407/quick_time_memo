@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neubrutalism_ui/neubrutalism_ui.dart';
 import 'package:pattern_background/pattern_background.dart';
@@ -14,6 +15,7 @@ import 'package:time_memo_app/state/app_state.dart';
 import 'package:time_memo_app/widgets/add_date_button.dart';
 import 'package:time_memo_app/widgets/add_modal_content.dart';
 import 'package:time_memo_app/widgets/inner_url_text.dart';
+import 'package:time_memo_app/widgets/todoItem.dart';
 
 class TaskPage extends ConsumerStatefulWidget {
   const TaskPage({super.key, required this.task});
@@ -28,7 +30,7 @@ class TaskPage extends ConsumerStatefulWidget {
 class _TaskPageState extends ConsumerState<TaskPage> {
   _TaskPageState({required this.task});
 
-  final Map<String, dynamic> task;
+  Map<String, dynamic> task;
 
   String create_difference_message(DateTime time){
     String msg = "";
@@ -65,7 +67,7 @@ class _TaskPageState extends ConsumerState<TaskPage> {
             fontSize: 20,
             color: difference_color
         ),
-      ),
+      )
     );
 
     final title_text = Container(
@@ -84,7 +86,7 @@ class _TaskPageState extends ConsumerState<TaskPage> {
 
     final content_container = Container(
       constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.5
+          maxHeight: MediaQuery.of(context).size.height * 0.4,
       ),
       child: NeuContainer(
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
@@ -95,7 +97,7 @@ class _TaskPageState extends ConsumerState<TaskPage> {
               padding: const EdgeInsets.all(8),
               child: Wrap(
                 children: [
-                  InnerUrlText(text: task["content"],style: const TextStyle(fontSize: 20),)
+                  InnerUrlText(text: task["content"],style: const TextStyle(fontSize: 20),),
                 ],
               )
           ),
@@ -111,10 +113,6 @@ class _TaskPageState extends ConsumerState<TaskPage> {
         buttonColor: Theme.of(context).colorScheme.tertiaryContainer,
         text: Text("タスクの変更",style: TextStyle(color: Theme.of(context).colorScheme.onTertiaryContainer),),
         onPressed: () async {
-          ref.read(title_provider.notifier).state = task["title"];
-          ref.read(content_provider.notifier).state = task["content"];
-          ref.read(date_provider.notifier).state = task["time"].toDate();
-          ref.read(enable_entry_provider.notifier).state = true;
 
           await showModalBottomSheet<void>(
             showDragHandle: true,
@@ -122,12 +120,26 @@ class _TaskPageState extends ConsumerState<TaskPage> {
             context: context,
             builder: (context) {
               return AddModalContent(
+                title: task["title"],
+                content: task["content"],
+                date: task["time"].toDate(),
                 doc_id: task["doc_id"],
               );
             },
           );
-          await Future.delayed(Duration(milliseconds: 200));
-          Navigator.of(context).pop();
+
+          await Future.delayed(Duration(seconds: 1));    //更新待ち
+
+          final List<Map<String, dynamic>> _list = ref.read(docs_provider).value!;
+
+          for (var doc in _list){
+            if(doc["doc_id"] == task["doc_id"]){
+              setState(() {
+                task = doc;
+              });
+            }
+          }
+
         },
       ),
     );
