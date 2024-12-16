@@ -10,18 +10,18 @@ import 'package:time_memo_app/state/app_state.dart';
 import 'package:time_memo_app/widgets/add_modal_content.dart';
 
 class NeuFloatingActionbutton extends ConsumerWidget {
-  NeuFloatingActionbutton({super.key});
+  const NeuFloatingActionbutton({super.key});
 
 
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final visible_appbar = ref.watch(bottom_appbar_visible_provider);
+    final visibleAppbar = ref.watch(bottom_appbar_visible_provider);
 
     return AnimatedContainer(
-      duration: Duration(milliseconds: 200),
-      height: (visible_appbar) ? 50 : 75,
+      duration: const Duration(milliseconds: 200),
+      height: (visibleAppbar) ? 50 : 75,
       child: NeuTextButton(
         buttonWidth: 150,
         enableAnimation: true,

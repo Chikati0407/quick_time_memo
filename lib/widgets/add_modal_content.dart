@@ -12,7 +12,7 @@ import 'package:time_memo_app/widgets/add_date_button.dart';
 
 
 class AddModalContent extends ConsumerStatefulWidget {
-  AddModalContent({super.key, this.doc_id, this.title, this.content, this.date});
+  const AddModalContent({super.key, this.doc_id, this.title, this.content, this.date});
 
   final String? title;
   final String? content;
@@ -50,7 +50,7 @@ class _AddModalContentState extends ConsumerState<AddModalContent> {
   @override
   Widget build(BuildContext context) {
 
-    final title_textfield = TextFormField(
+    final titleTextfield = TextFormField(
       initialValue: title,
       style: const TextStyle(
         fontSize: 24,
@@ -67,7 +67,7 @@ class _AddModalContentState extends ConsumerState<AddModalContent> {
         });
       },
     );
-    final content_container = NeuContainer(
+    final contentContainer = NeuContainer(
       color: Theme.of(context).colorScheme.surface,
       borderRadius: BorderRadius.circular(10),
       child: Padding(
@@ -84,7 +84,7 @@ class _AddModalContentState extends ConsumerState<AddModalContent> {
         ),
       ),
     );
-    final date_row = Row(
+    final dateRow = Row(
       mainAxisSize: MainAxisSize.max,
       children: [
         Expanded(
@@ -137,7 +137,7 @@ class _AddModalContentState extends ConsumerState<AddModalContent> {
         ),
       ],
     );
-    final time_row = Row(
+    final timeRow = Row(
       mainAxisSize: MainAxisSize.max,
       children: [
         Expanded(
@@ -188,7 +188,7 @@ class _AddModalContentState extends ConsumerState<AddModalContent> {
         ),
       ],
     );
-    final button_row = Row(
+    final buttonRow = Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -237,23 +237,23 @@ class _AddModalContentState extends ConsumerState<AddModalContent> {
         right: 16,
         left: 16,
       ),
-      child: Container(
+      child: SizedBox(
         height: 400,
         child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                title_textfield,
+                titleTextfield,
                 const SizedBox(height: 4,),
-                content_container,
+                contentContainer,
                 const SizedBox(height: 8,),
-                date_row,
+                dateRow,
                 const SizedBox(height: 8,),
-                time_row,
+                timeRow,
                 const SizedBox(height: 8,),
                 const SizedBox(height: 8,),
                 const Divider(),
-                button_row,
+                buttonRow,
               ],
             )),
       ),

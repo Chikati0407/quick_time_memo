@@ -1,5 +1,4 @@
-// Flutter imports:
-import 'package:animations/animations.dart';
+import 'package:animations/animations.dart' show OpenContainer;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -22,10 +21,10 @@ class Todoitem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    String time_meaasge = create_short_time_message(task["time"].toDate());
-    Color time_color = create_time_color(context, time_meaasge);
+    String timeMeaasge = create_short_time_message(task["time"].toDate());
+    Color timeColor = create_time_color(context, timeMeaasge);
 
-    String full_time_message = create_full_difference_message(task["time"].toDate());
+    String fullTimeMessage = create_full_difference_message(task["time"].toDate());
 
     return Animate(
       effects: const [ShimmerEffect()],
@@ -86,7 +85,7 @@ class Todoitem extends ConsumerWidget {
                           alignment: Alignment.center,
                           children: [
                             VerticalDivider(
-                              color: time_color,
+                              color: timeColor,
                               width: 4,
                             ),
                             Container(
@@ -95,11 +94,11 @@ class Todoitem extends ConsumerWidget {
                               color: Theme.of(context).colorScheme.surfaceContainer,
                               child: Center(
                                 child: Tooltip(
-                                  message: full_time_message,
+                                  message: fullTimeMessage,
                                   child: Text(
-                                    time_meaasge,
+                                    timeMeaasge,
                                     style: TextStyle(
-                                      color: time_color,
+                                      color: timeColor,
                                       fontSize: 18,
                                     ),
                                   ),

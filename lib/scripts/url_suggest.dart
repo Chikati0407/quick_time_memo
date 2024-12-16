@@ -18,21 +18,21 @@ Future<List<Widget>> create_url_suggest(String content) async {
     return [];
   } else {
     final chipList = <Widget>[];
-    var rem_text = content;
+    var remText = content;
 
     for (final regExpMatch in urlMatchs) {
       final url = content.substring(regExpMatch.start, regExpMatch.end);
-      final index = rem_text.indexOf(url);
+      final index = remText.indexOf(url);
 
       if (index != 0) {
-        rem_text = rem_text.substring(index);
+        remText = remText.substring(index);
       }
 
       chipList.add(
-        await CustomInputChip(rem_text.substring(0,url.length)),
+        await CustomInputChip(remText.substring(0,url.length)),
       );
 
-      rem_text = rem_text.substring(url.length);
+      remText = remText.substring(url.length);
     }
 
     return Future.value(chipList);
@@ -42,14 +42,14 @@ Future<List<Widget>> create_url_suggest(String content) async {
 
 }
 
-Future<Widget> CustomInputChip(String url_text) async {
+Future<Widget> CustomInputChip(String urlText) async {
 
   String title;
 
   try{
-    Response response = await get(Uri.parse(url_text));
-    var resp_text = parse(utf8.decode(response.bodyBytes));
-    title = resp_text.head!.getElementsByTagName("title")[0].innerHtml;
+    Response response = await get(Uri.parse(urlText));
+    var respText = parse(utf8.decode(response.bodyBytes));
+    title = respText.head!.getElementsByTagName("title")[0].innerHtml;
 
   } catch (e) {
     title = "エラー";
@@ -74,7 +74,7 @@ Future<Widget> CustomInputChip(String url_text) async {
           label: Text(title,overflow: TextOverflow.ellipsis,),
           onPressed: (){
             launchUrl(
-                Uri.parse(url_text),
+                Uri.parse(urlText),
                 mode: LaunchMode.platformDefault,
                 webOnlyWindowName: "_blank"
             );
