@@ -19,9 +19,6 @@ class Todoitem extends ConsumerWidget {
 
   final Map<String, dynamic> task;
 
-
-
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
@@ -30,11 +27,11 @@ class Todoitem extends ConsumerWidget {
 
     String full_time_message = create_full_difference_message(task["time"].toDate());
 
-    return Container(
-      height: 100,
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      child: Animate(
-        effects: [FadeEffect(),],
+    return Animate(
+      effects: const [ShimmerEffect()],
+      child: Container(
+        height: 100,
+        margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: OpenContainer(
           transitionDuration: const Duration(milliseconds: 300),
           openColor: Theme.of(context).colorScheme.surface,
@@ -118,8 +115,8 @@ class Todoitem extends ConsumerWidget {
                 )
             );
           },
-        ),
-      )
+        )
+      ),
     );
   }
 }

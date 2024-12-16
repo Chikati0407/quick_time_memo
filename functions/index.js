@@ -6,15 +6,15 @@ const { Timestamp } = require("firebase-admin/firestore");
 admin.initializeApp();
 const firestore = admin.firestore();
 
-const fcm_token_snap = await firestore.collection("token").doc("now_token").get();
-fcm_token = fcm_token_snap.data["token"];
 
-console.log(`とーくん：${fcm_token}`)
 
 
 exports.scheduledFunction = functions.pubsub.schedule("every 5 minutes").onRun( async (context)  => {
   const now = Date.now();
   const now5 = now + 300000;
+
+  const fcm_token_snap = await firestore.collection("token").doc("now_token").get();
+  fcm_token = fcm_token_snap.data["token"];
 
   const snapshot = await firestore.collection("todo").get();
 

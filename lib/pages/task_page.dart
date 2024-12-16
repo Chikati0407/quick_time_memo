@@ -48,8 +48,6 @@ class _TaskPageState extends ConsumerState<TaskPage> {
     final difference_message = create_full_difference_message(task["time"].toDate());
     final difference_color = create_time_color(context, difference_message);
 
-    final future_url_suggest = create_url_suggest(task["content"]);
-
     final difference_text = Container(
       height: 60,
       width: double.infinity,
@@ -101,13 +99,16 @@ class _TaskPageState extends ConsumerState<TaskPage> {
                 ),
               ),
               FutureBuilder(
-                future: future_url_suggest,
+                future:  create_url_suggest(task["content"]),
                 builder: (context, snapshot){
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        strokeCap: StrokeCap.round,
+                      ),
                     );
                   }
+
 
                   if (snapshot.error != null) {
                     return Center(
@@ -124,7 +125,7 @@ class _TaskPageState extends ConsumerState<TaskPage> {
                     padding: const EdgeInsets.all(8),
                     margin: const EdgeInsets.only(top: 8),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(6)
                     ),
                     child: Wrap(

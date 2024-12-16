@@ -50,7 +50,7 @@ class MyToDoApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
-      // themeMode: (ref.read(test_mode_provider)) ? ThemeMode.dark : ThemeMode.light,
+      themeMode: ThemeMode.light,
       theme: MaterialTheme().light(),
       darkTheme: MaterialTheme().dark(),
       home: const MyPage(),
